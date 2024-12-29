@@ -107,7 +107,7 @@ public class RobotContainer {
     // testCharacterization();
     //testTurn();
     //allTestCommandsGPM();
-    // testAutoOdometry();
+    testAutoOdometry();
     //allTestCommandsDrive();
     //testNotePickup();
     // try {
