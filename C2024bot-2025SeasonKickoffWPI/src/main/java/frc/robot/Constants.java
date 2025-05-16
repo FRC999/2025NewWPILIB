@@ -309,7 +309,7 @@ public final class Constants {
 		public static final class Intake {
 			public static final int INTAKE_MOTOR_CAN_ID = 51;
 			// public static final boolean INTAKE_SENSOR_PHASE = false;
-			public static final boolean INTAKE_INVERTED = false; // positive power - note in
+			public static final boolean INTAKE_INVERTED = true; // positive power - note in
 			// public static final double INTAKE_NEUTRAL_DEADBAND = 0.001;
 			// public static final int INTAKE_TIMEOUT = 30; //in ms
 			public static final double INTAKE_NOTE_GRAB_POWER = 0.45;
