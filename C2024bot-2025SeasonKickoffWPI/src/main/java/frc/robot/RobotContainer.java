@@ -13,6 +13,7 @@ import frc.robot.commands.ArmDownToNoteVision;
 import frc.robot.commands.ArmDownToNoteVisionForAutoNotePickup;
 import frc.robot.commands.ArmHoldCurrentPositionWithPID;
 import frc.robot.commands.ArmRelease;
+import frc.robot.commands.ArmStop;
 import frc.robot.commands.ArmTurnToAngle;
 import frc.robot.commands.AutonomousTrajectory2Poses;
 import frc.robot.commands.DriveManuallyCommand;
@@ -22,6 +23,8 @@ import frc.robot.commands.IntakeStop;
 import frc.robot.commands.NotePickupCamera;
 import frc.robot.commands.RunTrajectorySequenceRobotAtStartPoint;
 import frc.robot.commands.ShooterStop;
+import frc.robot.commands.ShootingAmpSequence;
+import frc.robot.commands.ShootingGPM0Sequence;
 import frc.robot.commands.ShootingSequenceManual;
 import frc.robot.commands.StopRobot;
 import frc.robot.commands.TurnToRelativeAngleSoftwarePIDCommand;
@@ -108,7 +111,8 @@ public class RobotContainer {
     //testTurn();
     //allTestCommandsGPM();
     // testAutoOdometry();
-    //allTestCommandsDrive();
+    allTestCommandsDrive();
+    competitionCommandsForGPMController();
     //testNotePickup();
     // try {
     //   testAuto();
@@ -127,6 +131,15 @@ public class RobotContainer {
 
   private void allTestCommandsDrive() {
     // R2 on driver xbox - intake grab note
+    // new Trigger(() -> xboxDriveController.getRawAxis(3) > 0.3)
+    //     .onTrue(new IntakeGrabNote().
+    //         alongWith
+    //             (
+    //                 (new ArmTurnToAngle(() -> Arm.ARM_INTAKE_ANGLE)
+    //                         .until(intakeSubsystem::isIntakeDown))
+    //                     .andThen(new ArmRelease())
+    //             ))
+    //     .onFalse(new IntakeStop().andThen(new ArmRelease()));
     new Trigger(() -> xboxDriveController.getRawAxis(3) > 0.3)
         .onTrue(new IntakeGrabNote().
             alongWith
@@ -134,7 +147,8 @@ public class RobotContainer {
                     (new ArmTurnToAngle(() -> Arm.ARM_INTAKE_ANGLE)
                             .until(intakeSubsystem::isIntakeDown))
                         .andThen(new ArmRelease())
-                ))
+                )
+            )
         .onFalse(new IntakeStop().andThen(new ArmRelease()));
 
     new Trigger(() -> xboxDriveController.getRawAxis(2) > 0.3) // L2 trigger - spit out note
@@ -162,6 +176,41 @@ public class RobotContainer {
         .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmHoldCurrentPositionWithPID()));
 
 
+  }
+
+  public void competitionCommandsForGPMController() {
+
+      // Shooting Speaker Close Range
+      new JoystickButton(xboxGPMController, 2) // Button B
+              .onTrue(new ShootingGPM0Sequence(0))
+              .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmStop()));
+
+    // L1 + L-DOWN = run arm DOWN manually 0.5 speed
+    new Trigger(() -> (xboxGPMController.getRawButton(5) && (xboxGPMController.getRawAxis(1) > 0.3) ))
+        .onTrue(new StartEndCommand(() -> armSubsystem.runArmMotors(-0.5) ,
+            () -> {    double currentPosition = armSubsystem.getArmEncoderLeader();
+                armSubsystem.stopArmMotors();
+                armSubsystem.setArmMotorEncoder(currentPosition);} ,
+            armSubsystem))
+        .onFalse(new ArmHoldCurrentPositionWithPID());
+
+    // L1 + L-UP = run arm UP manually 0.5 speed
+    new Trigger(() -> (xboxGPMController.getRawButton(5) && (xboxGPMController.getRawAxis(1) < -0.3) ))
+        .onTrue(new StartEndCommand(() -> armSubsystem.runArmMotors(0.5) ,
+            () -> {    double currentPosition = RobotContainer.armSubsystem.getArmEncoderLeader();
+                RobotContainer.armSubsystem.stopArmMotors();
+                RobotContainer.armSubsystem.setArmMotorEncoder(currentPosition);} ,
+            armSubsystem))
+        .onFalse(new ArmHoldCurrentPositionWithPID());
+
+    // Manual shooting with 0-distance power; no arm - pivot it separately
+    new Trigger(() -> (xboxGPMController.getRawButton(5) && (xboxGPMController.getRawAxis(2) > 0.3) ) )
+        .onTrue(new ShootingSequenceManual()) // Manual shooting sequence - 2m parameters
+        .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmHoldCurrentPositionWithPID()));
+
+    new JoystickButton(xboxGPMController, 9)    // Button Y
+        .onTrue(new ArmDownToIntake())
+        .onFalse(new ArmRelease());
   }
 
   public void testNotePickup(){
