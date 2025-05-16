@@ -23,6 +23,8 @@ import frc.robot.commands.IntakeStop;
 import frc.robot.commands.NotePickupCamera;
 import frc.robot.commands.RunTrajectorySequenceRobotAtStartPoint;
 import frc.robot.commands.ShooterStop;
+import frc.robot.commands.ShootingAmpPostSequence;
+import frc.robot.commands.ShootingAmpPreSequence;
 import frc.robot.commands.ShootingAmpSequence;
 import frc.robot.commands.ShootingGPM0Sequence;
 import frc.robot.commands.ShootingSequenceManual;
@@ -184,6 +186,11 @@ public class RobotContainer {
       new JoystickButton(xboxGPMController, 2) // Button B
               .onTrue(new ShootingGPM0Sequence(0))
               .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmStop()));
+
+      new JoystickButton(xboxGPMController, 1)
+          .onTrue(
+              new ShootingAmpPreSequence().andThen(new ShootingAmpSequence()).andThen(new ShootingAmpPostSequence()))
+          .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmStop()));
 
     // L1 + L-DOWN = run arm DOWN manually 0.5 speed
     new Trigger(() -> (xboxGPMController.getRawButton(5) && (xboxGPMController.getRawAxis(1) > 0.3) ))
