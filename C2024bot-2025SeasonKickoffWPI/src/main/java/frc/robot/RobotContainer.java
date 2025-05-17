@@ -13,6 +13,7 @@ import frc.robot.commands.ArmDownToNoteVision;
 import frc.robot.commands.ArmDownToNoteVisionForAutoNotePickup;
 import frc.robot.commands.ArmHoldCurrentPositionWithPID;
 import frc.robot.commands.ArmRelease;
+import frc.robot.commands.ArmStop;
 import frc.robot.commands.ArmTurnToAngle;
 import frc.robot.commands.AutonomousTrajectory2Poses;
 import frc.robot.commands.DriveManuallyCommand;
@@ -22,6 +23,7 @@ import frc.robot.commands.IntakeStop;
 import frc.robot.commands.NotePickupCamera;
 import frc.robot.commands.RunTrajectorySequenceRobotAtStartPoint;
 import frc.robot.commands.ShooterStop;
+import frc.robot.commands.ShootingGPM0Sequence;
 import frc.robot.commands.ShootingSequenceManual;
 import frc.robot.commands.StopRobot;
 import frc.robot.commands.TurnToRelativeAngleSoftwarePIDCommand;
@@ -106,9 +108,9 @@ public class RobotContainer {
     // testAutoOdometry();
     // testCharacterization();
     //testTurn();
-    //allTestCommandsGPM();
+    allTestCommandsGPM();
     // testAutoOdometry();
-    //allTestCommandsDrive();
+    allTestCommandsDrive();
     //testNotePickup();
     // try {
     //   testAuto();
@@ -146,6 +148,10 @@ public class RobotContainer {
     new JoystickButton(xboxGPMController, 9)    // Button Y
         .onTrue(new ArmDownToIntake())
         .onFalse(new ArmRelease());
+
+    new JoystickButton(xboxDriveController, 2) // Button B
+        .onTrue(new ShootingGPM0Sequence(0))
+        .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmStop()));
 
         // L1 + L-UP = run arm UP manually 0.5 speed
     new Trigger(() -> (xboxGPMController.getRawButton(5) && (xboxGPMController.getRawAxis(1) < -0.3)))
