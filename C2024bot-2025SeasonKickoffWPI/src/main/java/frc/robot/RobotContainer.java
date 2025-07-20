@@ -281,7 +281,7 @@ public class RobotContainer {
 
   private double getDriverOmegaAxis() {
     //return -xboxController.getLeftStickOmega();
-    return -xboxDriveController.getLeftStickX() * 0.6;
+    return -xboxDriveController.getLeftStickX() * 1.0;
   }
  
 }
