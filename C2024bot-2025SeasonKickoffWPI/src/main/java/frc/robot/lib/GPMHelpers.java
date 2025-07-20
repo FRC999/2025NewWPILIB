@@ -76,7 +76,7 @@ public class GPMHelpers {
     } */
 
     public void setGPM0IntakePower() {
-        GPM_0_IntakePower.put(0.0, 0.40);
+        GPM_0_IntakePower.put(0.0, 0.45);
         GPM_0_IntakePower.put(1.0, 0.70);
         GPM_0_IntakePower.put(1.75, 0.70);
         GPM_0_IntakePower.put(2.0, 0.70);

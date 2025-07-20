@@ -26,6 +26,7 @@ import frc.robot.commands.ShooterStop;
 import frc.robot.commands.ShootingGPM0Sequence;
 import frc.robot.commands.ShootingSequenceManual;
 import frc.robot.commands.StopRobot;
+import frc.robot.commands.TeleopZeroYaw;
 import frc.robot.commands.TurnToRelativeAngleSoftwarePIDCommand;
 import frc.robot.commands.TurnToRelativeAngleTrapezoidProfile;
 import frc.robot.lib.GPMHelpers;
@@ -142,15 +143,18 @@ public class RobotContainer {
     new Trigger(() -> xboxDriveController.getRawAxis(2) > 0.3) // L2 trigger - spit out note
         .onTrue(new IntakeRun(Intake.INTAKE_NOTE_SPEW_POWER))
         .onFalse(new IntakeStop());
+
+    new JoystickButton(xboxDriveController, 8)
+        .onTrue(new TeleopZeroYaw());
   }
 
   private void allTestCommandsGPM() {
-    new JoystickButton(xboxGPMController, 9)    // Button Y
+    new JoystickButton(xboxDriveController, 9)    // Button Y
         .onTrue(new ArmDownToIntake())
         .onFalse(new ArmRelease());
 
     new JoystickButton(xboxDriveController, 2) // Button B
-        .onTrue(new ShootingGPM0Sequence(0))
+        .onTrue(new ShootingGPM0Sequence(0.1))
         .onFalse(new ShooterStop().andThen(new IntakeStop()).andThen(new ArmStop()));
 
         // L1 + L-UP = run arm UP manually 0.5 speed
@@ -271,17 +275,17 @@ public class RobotContainer {
   // Driver preferred controls
   private double getDriverXAxis() {
     //return -xboxController.getLeftStickY();
-    return -xboxDriveController.getRightStickY();
+    return -xboxDriveController.getLeftStickY();
   }
 
   private double getDriverYAxis() {
     //return -xboxController.getLeftStickX();
-    return -xboxDriveController.getRightStickX();
+    return -xboxDriveController.getLeftStickX();
   }
 
   private double getDriverOmegaAxis() {
     //return -xboxController.getLeftStickOmega();
-    return -xboxDriveController.getLeftStickX() * 1.0;
+    return -xboxDriveController.getRightStickX() * 0.6;
   }
  
 }

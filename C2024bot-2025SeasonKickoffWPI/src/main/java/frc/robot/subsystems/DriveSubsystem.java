@@ -326,13 +326,16 @@ public class DriveSubsystem extends SwerveDrivetrain<TalonFX,TalonFX,CANcoder> i
    * @return The previous yaw
    */
   public double zeroYaw() {
-    double previousYaw = getYaw();
-    if (RobotContainer.isAllianceRed && RobotContainer.isReversingControllerAndIMUForRed) {
-      imu.setYaw(180.0);
-    } else {
-      imu.setYaw(0);
-    }
-    return previousYaw;
+    // double previousYaw = getYaw();
+    // if (RobotContainer.isAllianceRed && RobotContainer.isReversingControllerAndIMUForRed) {
+    //   imu.setYaw(180.0);
+    // } else {
+    //   imu.setYaw(0);
+    // }
+    // return previousYaw;
+
+    imu.setYaw(-0);
+    return 0;
   }
 
   public double setYaw(double y) {
